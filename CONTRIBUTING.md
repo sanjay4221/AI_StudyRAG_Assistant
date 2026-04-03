@@ -7,7 +7,7 @@ Thank you for your interest in contributing! Here's how to get started.
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/studyrag.git`
+2. Clone your fork: `git clone https://github.com/sanjay4221/AI_StudyRAG_Assistant.git`
 3. Create a branch: `git checkout -b feature/your-feature-name`
 4. Set up your local environment (see [README.md](README.md))
 5. Make your changes
