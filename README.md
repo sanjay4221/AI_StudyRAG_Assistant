@@ -122,7 +122,7 @@ Question → MiniLM embedding → ChromaDB (top 10 chunks)
 ### 1. Clone and setup
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/studyrag.git
+git clone https://github.com/sanjay4221/AI_StudyRAG_Assistant.git
 cd studyrag
 ```
 
