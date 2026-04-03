@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyRAG — Sign In</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0d0f14;
+      --surface: #13161e;
+      --surface2:#1a1e2a;
+      --border:  #252a38;
+      --accent:  #f97316;
+      --accent2: #fb923c;
+      --green:   #34d399;
+      --red:     #f87171;
+      --text:    #e8eaf0;
+      --muted:   #6b7280;
+      --font:    'Sora', sans-serif;
+      --mono:    'JetBrains Mono', monospace;
+      --radius:  12px;
+    }
+    html, body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Card ── */
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 40px 36px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+      margin: 24px;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+    .logo-sub  { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+    .card-title { font-size: 20px; font-weight: 600; margin-bottom: 24px; }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: var(--surface2);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+    .tab {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .tab.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 4px rgba(0,0,0,.3);
+    }
+
+    /* ── Form ── */
+    .form-group { margin-bottom: 16px; }
+    label {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      padding: 11px 14px;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input:focus { border-color: var(--accent); }
+    input::placeholder { color: var(--muted); }
+
+    .btn-primary {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #fff;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-primary:hover:not(:disabled) { opacity: .9; transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: .5; cursor: default; }
+
+    /* ── Error / success ── */
+    .alert {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert.error   { background: rgba(248,113,113,.1); border: 1px solid var(--red);   color: var(--red); }
+    .alert.success { background: rgba(52,211,153,.1);  border: 1px solid var(--green); color: var(--green); }
+    .alert.show    { display: block; }
+
+    .divider { text-align: center; color: var(--muted); font-size: 12px; margin: 20px 0; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">StudyRAG</div>
+  <div class="logo-sub">AI Study Assistant · Powered by Groq</div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" id="tabLogin"    onclick="switchTab('login')">Sign In</button>
+    <button class="tab"        id="tabRegister" onclick="switchTab('register')">Register</button>
+  </div>
+
+  <!-- Alert -->
+  <div class="alert" id="alert"></div>
+
+  <!-- Login form -->
+  <div id="formLogin">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="you@university.edu" autocomplete="email" />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="btn-primary" id="btnLogin" onclick="handleLogin()">Sign In →</button>
+  </div>
+
+    <div id="formRegister" style="display:none">
+    <div class="form-group">
+      <label>Full Name</label>
+      <input type="text" id="regName" placeholder="Jane Smith" autocomplete="name" />
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="regEmail" placeholder="you@university.edu" autocomplete="email" />
+    </div>
+    <div class="form-group">
+      <label>Password <span style="color:var(--muted)">(min 6 characters)</span></label>
+      <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" />
+    </div>
+    <div class="form-group" style="display:flex;align-items:flex-start;gap:10px;margin-top:4px">
+      <input type="checkbox" id="regTerms" style="margin-top:3px;accent-color:var(--accent);flex-shrink:0" />
+      <label for="regTerms" style="font-size:12px;color:var(--muted);cursor:pointer">
+        I agree to the <a href="/terms" target="_blank" style="color:var(--accent)">Terms of Use</a>
+        and <a href="/privacy" target="_blank" style="color:var(--accent)">Privacy Policy</a>.
+        I understand that my questions and document content are processed by Groq AI.
+      </label>
+    </div>
+    <button class="btn-primary" id="btnRegister" onclick="handleRegister()">Create Account →</button>
+  </div>
+</div>
+
+<script>
+  const API = ""   // empty = same host:port as the page, works for both localhost and 127.0.0.1
+
+  // ── Redirect if already logged in ────────────────────────────────────────
+  if (localStorage.getItem("token")) {
+    window.location.href = "/chat";
+  }
+
+  // ── Tab switching ─────────────────────────────────────────────────────────
+  function switchTab(tab) {
+    document.getElementById("formLogin").style.display    = tab === "login"    ? "block" : "none";
+    document.getElementById("formRegister").style.display = tab === "register" ? "block" : "none";
+    document.getElementById("tabLogin").className    = "tab" + (tab === "login"    ? " active" : "");
+    document.getElementById("tabRegister").className = "tab" + (tab === "register" ? " active" : "");
+    hideAlert();
+  }
+
+  // ── Alert helpers ─────────────────────────────────────────────────────────
+  function showAlert(msg, type = "error") {
+    const el = document.getElementById("alert");
+    el.textContent = msg;
+    el.className   = `alert show ${type}`;
+  }
+  function hideAlert() {
+    document.getElementById("alert").className = "alert";
+  }
+
+  // ── Enter key to submit ───────────────────────────────────────────────────
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Enter") return;
+    const loginVisible = document.getElementById("formLogin").style.display !== "none";
+    loginVisible ? handleLogin() : handleRegister();
+  });
+
+  // ── Login ─────────────────────────────────────────────────────────────────
+  async function handleLogin() {
+    const email    = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value;
+    if (!email || !password) return showAlert("Please fill in all fields.");
+
+    const btn = document.getElementById("btnLogin");
+    btn.disabled = true;
+    btn.textContent = "Signing in…";
+    hideAlert();
+
+    try {
+      const r    = await fetch(`${API}/auth/login`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ email, password }),
+      });
+      const data = await r.json();
+      if (!r.ok) return showAlert(extractError(data, r.status));
+      saveAndRedirect(data);
+    } catch {
+      showAlert("Cannot reach the backend. Is uvicorn running?");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Sign In →";
+    }
+  }
+
+  // ── Register ──────────────────────────────────────────────────────────────
+  async function handleRegister() {
+    const full_name = document.getElementById("regName").value.trim();
+    const email     = document.getElementById("regEmail").value.trim();
+    const password  = document.getElementById("regPassword").value;
+    const agreed    = document.getElementById("regTerms").checked;
+
+    if (!email || !password) return showAlert("Email and password are required.");
+    if (!agreed) return showAlert("Please agree to the Terms of Use and Privacy Policy to continue.");
+
+    const btn = document.getElementById("btnRegister");
+    btn.disabled = true;
+    btn.textContent = "Creating account…";
+    hideAlert();
+
+    try {
+      const r    = await fetch(`${API}/auth/register`, {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ email, password, full_name }),
+      });
+      const data = await r.json();
+      if (!r.ok) return showAlert(extractError(data, r.status));
+
+      showAlert("Account created! Redirecting…", "success");
+      setTimeout(() => saveAndRedirect(data), 800);
+    } catch {
+      showAlert("Cannot reach the backend. Is uvicorn running?");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Create Account →";
+    }
+  }
+
+  // ── Extract readable error from FastAPI response ──────────────────────────
+  function extractError(data, status) {
+    if (status === 429) return "Too many attempts. Please wait a minute and try again.";
+    if (!data) return "Something went wrong.";
+    if (typeof data.detail === "string") return data.detail;
+    if (Array.isArray(data.detail)) {
+      return data.detail.map(e => e.msg || JSON.stringify(e)).join(", ");
+    }
+    return JSON.stringify(data);
+  }
+
+  // ── Save token + redirect ─────────────────────────────────────────────────
+  function saveAndRedirect(data) {
+    localStorage.setItem("token",     data.access_token);
+    localStorage.setItem("user_id",   data.user_id);
+    localStorage.setItem("email",     data.email);
+    localStorage.setItem("full_name", data.full_name || "");
+    localStorage.setItem("is_admin",  data.is_admin ? "true" : "false");
+    window.location.href = "/chat";
+  }
+</script>
+
+</body>
+</html>

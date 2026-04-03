@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Structure - student-rag</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --text-color: #c9d1d9;
+            --folder-color: #7ee787;
+            --file-color: #61afef;
+            --comment-color: #8b949e;
+            --border-color: #30363d;
+            --hover-bg: #161b22;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 40px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            background-color: #0d1117;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        h2 {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            color: #58a6ff;
+            display: flex;
+            align-items: center;
+        }
+
+        .tree {
+            font-family: 'Cascadia Code', 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .tree ul {
+            list-style-type: none;
+            padding-left: 25px;
+            border-left: 1px dashed #30363d;
+            margin: 5px 0;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .folder { color: var(--folder-color); font-weight: bold; }
+        .file { color: var(--file-color); }
+        .comment {
+            color: var(--comment-color);
+            margin-left: 20px;
+            font-style: italic;
+            font-size: 13px;
+        }
+
+        .icon {
+            margin-right: 8px;
+            width: 18px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .badge {
+            background: #238636;
+            color: white;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 10px;
+            margin-left: 10px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📂 student-rag <span class="badge">Root</span></h2>
+    <div class="tree">
+        <ul>
+            <li>
+                <div class="item"><span class="icon">📁</span><span class="folder">backend/</span></div>
+                <ul>
+                    <li>
+                        <div class="item"><span class="icon">📁</span><span class="folder">api/</span></div>
+                        <ul>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">deps.py</span> <span class="comment">← JWT auth guard + admin guard</span></div></li>
+                            <li>
+                                <div class="item"><span class="icon">📁</span><span class="folder">routes/</span></div>
+                                <ul>
+                                    <li><div class="item"><span class="icon">📄</span><span class="file">auth.py</span> <span class="comment">← Register, login, /me</span></div></li>
+                                    <li><div class="item"><span class="icon">📄</span><span class="file">chat.py</span> <span class="comment">← SSE streaming + sessions</span></div></li>
+                                    <li><div class="item"><span class="icon">📄</span><span class="file">documents.py</span> <span class="comment">← Upload, list, reset</span></div></li>
+                                    <li><div class="item"><span class="icon">📄</span><span class="file">health.py</span> <span class="comment">← Health check + model info</span></div></li>
+                                    <li><div class="item"><span class="icon">📄</span><span class="file">admin.py</span> <span class="comment">← Admin-only endpoints</span></div></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="item"><span class="icon">📁</span><span class="folder">core/</span></div>
+                        <ul>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">config.py</span> <span class="comment">← All settings + env vars</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">exceptions.py</span> <span class="comment">← Custom exception hierarchy</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">limiter.py</span> <span class="comment">← Rate limiter setup</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">logger.py</span> <span class="comment">← Rotating file + console logger</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">security.py</span> <span class="comment">← bcrypt + JWT</span></div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="item"><span class="icon">📁</span><span class="folder">db/</span></div>
+                        <ul>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">models.py</span> <span class="comment">← User, ChatSession, ChatMessage</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">database.py</span> <span class="comment">← SQLite / PostgreSQL</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">crud.py</span> <span class="comment">← All DB operations</span></div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="item"><span class="icon">📁</span><span class="folder">rag/</span></div>
+                        <ul>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">embeddings.py</span> <span class="comment">← HuggingFace MiniLM</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">ingestion.py</span> <span class="comment">← PDF → chunks → ChromaDB</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">retriever.py</span> <span class="comment">← Per-user ChromaDB collections</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">reranker.py</span> <span class="comment">← CrossEncoder reranking</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">chain.py</span> <span class="comment">← Groq LLM + QA</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">tools.py</span> <span class="comment">← Quiz, summary, confidence</span></div></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="item"><span class="icon">📁</span><span class="folder">tests/</span></div>
+                        <ul>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">conftest.py</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">test_security.py</span> <span class="badge">14 tests</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">test_crud.py</span> <span class="badge">18 tests</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">test_api_auth.py</span> <span class="badge">15 tests</span></div></li>
+                        </ul>
+                    </li>
+                    <li><div class="item"><span class="icon">📄</span><span class="file">main.py</span></div></li>
+                    <li><div class="item"><span class="icon">📄</span><span class="file">requirements.txt</span></div></li>
+                </ul>
+            </li>
+
+            <li>
+                <div class="item"><span class="icon">📁</span><span class="folder">frontend/</span></div>
+                <ul>
+                    <li><div class="item"><span class="icon">📄</span><span class="file">login.html</span></div></li>
+                    <li><div class="item"><span class="icon">📄</span><span class="file">index.html</span></div></li>
+                    <li><div class="item"><span class="icon">📁</span><span class="folder">js/</span></div>
+                        <ul>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">auth.js</span></div></li>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">app.js</span></div></li>
+                        </ul>
+                    </li>
+                    <li><div class="item"><span class="icon">📁</span><span class="folder">css/</span></div>
+                        <ul>
+                            <li><div class="item"><span class="icon">📄</span><span class="file">style.css</span></div></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+
+            <li><div class="item"><span class="icon">📁</span><span class="folder">uploads/</span> <span class="comment"> (gitignored)</span></div></li>
+            <li><div class="item"><span class="icon">📁</span><span class="folder">vectorstore/</span> <span class="comment"> (gitignored)</span></div></li>
+            <li><div class="item"><span class="icon">📄</span><span class="file">Dockerfile</span></div></li>
+            <li><div class="item"><span class="icon">📄</span><span class="file">docker-compose.yml</span></div></li>
+            <li><div class="item"><span class="icon">📄</span><span class="file">.env.example</span></div></li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

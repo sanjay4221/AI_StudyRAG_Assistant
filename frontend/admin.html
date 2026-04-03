@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyRAG Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0d0f14;
+      --surface: #13161e;
+      --surface2:#1a1e2a;
+      --border:  #252a38;
+      --accent:  #f97316;
+      --accent2: #fb923c;
+      --green:   #34d399;
+      --red:     #f87171;
+      --blue:    #60a5fa;
+      --yellow:  #fbbf24;
+      --text:    #e8eaf0;
+      --muted:   #6b7280;
+      --font:    'Sora', sans-serif;
+      --mono:    'JetBrains Mono', monospace;
+      --radius:  10px;
+    }
+    html, body { min-height:100vh; background:var(--bg); color:var(--text); font-family:var(--font); font-size:14px; }
+
+    /* ── Topbar ── */
+    .topbar {
+      display:flex; align-items:center; gap:16px;
+      padding:0 28px; height:56px;
+      background:var(--surface); border-bottom:1px solid var(--border);
+      position:sticky; top:0; z-index:100;
+    }
+    .logo { font-size:16px; font-weight:700; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .admin-badge { font-size:10px; font-family:var(--mono); padding:2px 8px; background:rgba(249,115,22,.15); border:1px solid rgba(249,115,22,.3); border-radius:20px; color:var(--accent); }
+    .topbar-spacer { flex:1; }
+    .admin-name { font-size:12px; color:var(--muted); }
+    .btn-logout { padding:5px 12px; border:1px solid var(--border); border-radius:6px; background:transparent; color:var(--muted); font-family:var(--font); font-size:12px; cursor:pointer; transition:color .2s,border-color .2s; }
+    .btn-logout:hover { color:var(--red); border-color:var(--red); }
+    .btn-chat { padding:5px 12px; border:1px solid var(--border); border-radius:6px; background:transparent; color:var(--blue); font-family:var(--font); font-size:12px; cursor:pointer; transition:color .2s,border-color .2s; }
+    .btn-chat:hover { border-color:var(--blue); }
+
+    /* ── Layout ── */
+    .container { max-width:1200px; margin:0 auto; padding:28px 28px; }
+
+    /* ── Stats row ── */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
+    .stat-card {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius); padding:18px 20px;
+    }
+    .stat-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.8px; margin-bottom:8px; }
+    .stat-value { font-size:28px; font-weight:700; font-family:var(--mono); }
+    .stat-value.orange { color:var(--accent); }
+    .stat-value.green  { color:var(--green); }
+    .stat-value.blue   { color:var(--blue); }
+    .stat-value.yellow { color:var(--yellow); }
+
+    /* ── Section header ── */
+    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .section-title  { font-size:16px; font-weight:600; }
+
+    /* ── User table ── */
+    .user-table { width:100%; border-collapse:collapse; }
+    .user-table th {
+      text-align:left; font-size:10px; font-weight:600;
+      text-transform:uppercase; letter-spacing:.8px;
+      color:var(--muted); padding:10px 14px;
+      border-bottom:1px solid var(--border);
+    }
+    .user-table td { padding:12px 14px; border-bottom:1px solid var(--border); vertical-align:middle; }
+    .user-table tr:hover td { background:rgba(255,255,255,.02); }
+    .user-table tr:last-child td { border-bottom:none; }
+
+    .avatar-circle {
+      width:32px; height:32px; border-radius:50%;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px; font-weight:700; color:#fff; flex-shrink:0;
+    }
+    .user-info    { display:flex; align-items:center; gap:10px; }
+    .user-name    { font-weight:500; font-size:13px; }
+    .user-email   { font-size:11px; color:var(--muted); font-family:var(--mono); }
+
+    .badge {
+      display:inline-flex; align-items:center; gap:4px;
+      font-size:10px; font-family:var(--mono); padding:2px 8px;
+      border-radius:20px; font-weight:600;
+    }
+    .badge.admin   { background:rgba(249,115,22,.15); border:1px solid rgba(249,115,22,.3); color:var(--accent); }
+    .badge.active  { background:rgba(52,211,153,.12);  border:1px solid rgba(52,211,153,.3);  color:var(--green); }
+    .badge.inactive{ background:rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.3); color:var(--red); }
+
+    .doc-chips { display:flex; flex-wrap:wrap; gap:4px; }
+    .doc-chip  { font-size:10px; font-family:var(--mono); padding:2px 7px; background:var(--surface2); border:1px solid var(--border); border-radius:4px; color:var(--muted); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    .action-row { display:flex; gap:6px; flex-wrap:wrap; }
+    .btn-sm {
+      padding:4px 10px; border-radius:6px; font-family:var(--font);
+      font-size:11px; cursor:pointer; border:1px solid transparent; transition:opacity .2s;
+    }
+    .btn-sm:hover { opacity:.8; }
+    .btn-view    { background:rgba(96,165,250,.12);  border-color:rgba(96,165,250,.3);  color:var(--blue); }
+    .btn-promote { background:rgba(249,115,22,.12);  border-color:rgba(249,115,22,.3);  color:var(--accent); }
+    .btn-demote  { background:rgba(251,191,36,.12);  border-color:rgba(251,191,36,.3);  color:var(--yellow); }
+    .btn-danger  { background:rgba(248,113,113,.12); border-color:rgba(248,113,113,.3); color:var(--red); }
+    .btn-success { background:rgba(52,211,153,.12);  border-color:rgba(52,211,153,.3);  color:var(--green); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.7); z-index:200;
+      align-items:center; justify-content:center;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:14px; width:100%; max-width:720px;
+      max-height:85vh; display:flex; flex-direction:column;
+      margin:16px; box-shadow:0 24px 64px rgba(0,0,0,.5);
+    }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px; border-bottom:1px solid var(--border); flex-shrink:0;
+    }
+    .modal-title  { font-size:15px; font-weight:600; }
+    .modal-close  { background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; padding:2px 8px; border-radius:4px; }
+    .modal-close:hover { color:var(--text); background:var(--surface2); }
+    .modal-body   { overflow-y:auto; padding:20px 22px; flex:1; }
+
+    /* Session list in modal */
+    .session-card {
+      background:var(--surface2); border:1px solid var(--border);
+      border-radius:8px; margin-bottom:12px; overflow:hidden;
+    }
+    .session-card-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:10px 14px; cursor:pointer;
+      border-bottom:1px solid var(--border);
+    }
+    .session-card-header:hover { background:rgba(255,255,255,.02); }
+    .session-name { font-size:13px; font-weight:500; }
+    .session-date { font-size:10px; color:var(--muted); font-family:var(--mono); }
+    .session-messages { display:none; padding:12px 14px; }
+    .session-messages.open { display:block; }
+    .msg-row { display:flex; gap:10px; margin-bottom:10px; align-items:flex-start; }
+    .msg-role { font-size:10px; font-family:var(--mono); padding:2px 7px; border-radius:4px; flex-shrink:0; margin-top:2px; }
+    .msg-role.user { background:rgba(249,115,22,.15); color:var(--accent); }
+    .msg-role.ai   { background:rgba(96,165,250,.12);  color:var(--blue); }
+    .msg-text { font-size:12px; color:var(--text); line-height:1.6; }
+    .msg-empty { font-size:12px; color:var(--muted); text-align:center; padding:20px; }
+
+    /* ── Toast ── */
+    .toast {
+      position:fixed; bottom:20px; left:50%;
+      transform:translateX(-50%) translateY(12px);
+      background:var(--surface2); border:1px solid var(--border);
+      padding:8px 20px; border-radius:8px; font-size:12px;
+      opacity:0; pointer-events:none; transition:opacity .25s,transform .25s; z-index:999;
+    }
+    .toast.show    { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.success { border-color:var(--green); color:var(--green); }
+    .toast.error   { border-color:var(--red);   color:var(--red); }
+    .toast.info    { border-color:var(--accent); color:var(--accent); }
+
+    /* ── Empty/loading ── */
+    .loading { text-align:center; color:var(--muted); padding:40px; font-size:13px; }
+
+    @media(max-width:700px) {
+      .stats-row { grid-template-columns:1fr 1fr; }
+      .action-row { flex-direction:column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="topbar">
+  <div class="logo">StudyRAG</div>
+  <span class="admin-badge">⚙ Admin</span>
+  <div class="topbar-spacer"></div>
+  <span class="admin-name" id="adminName"></span>
+  <button class="btn-chat" onclick="window.location='/chat'">← Back to Chat</button>
+  <button class="btn-logout" onclick="logout()">Sign out</button>
+</div>
+
+<!-- Main -->
+<div class="container">
+
+  <!-- Stats -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card"><div class="stat-label">Total Users</div><div class="stat-value orange" id="statUsers">—</div></div>
+    <div class="stat-card"><div class="stat-label">Active Users</div><div class="stat-value green" id="statActive">—</div></div>
+    <div class="stat-card"><div class="stat-label">Total Sessions</div><div class="stat-value blue" id="statSessions">—</div></div>
+    <div class="stat-card"><div class="stat-label">Total Messages</div><div class="stat-value yellow" id="statMessages">—</div></div>
+  </div>
+
+  <!-- Users table -->
+  <div class="section-header">
+    <div class="section-title">👥 Registered Users</div>
+    <button class="btn-sm btn-view" onclick="loadAll()">↻ Refresh</button>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Status</th>
+          <th>Indexed Documents</th>
+          <th>Sessions</th>
+          <th>Messages</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="userTableBody">
+        <tr><td colspan="7" class="loading">Loading users…</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Sessions modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Chat Sessions</div>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <div class="loading">Loading sessions…</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = "";
+
+  // ── Auth guard ────────────────────────────────────────────────────────────
+  const token = localStorage.getItem("token");
+  if (!token) window.location.href = "/";
+
+  document.getElementById("adminName").textContent =
+    localStorage.getItem("full_name") || localStorage.getItem("email") || "Admin";
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "/";
+  }
+
+  // ── API helpers ───────────────────────────────────────────────────────────
+  async function apiFetch(path, options = {}) {
+    options.headers = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+      ...(options.headers || {}),
+    };
+    const r = await fetch(`${API}${path}`, options);
+    if (r.status === 401) { logout(); return; }
+    if (r.status === 403) { showToast("Admin access required", "error"); throw new Error("forbidden"); }
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.detail || `HTTP ${r.status}`);
+    return data;
+  }
+
+  // ── Load everything ───────────────────────────────────────────────────────
+  async function loadAll() {
+    await Promise.all([loadStats(), loadUsers()]);
+  }
+
+  async function loadStats() {
+    try {
+      const d = await apiFetch("/admin/stats");
+      document.getElementById("statUsers").textContent    = d.total_users;
+      document.getElementById("statActive").textContent   = d.active_users;
+      document.getElementById("statSessions").textContent = d.total_sessions;
+      document.getElementById("statMessages").textContent = d.total_messages;
+    } catch (e) { console.error("Stats error:", e); }
+  }
+
+  async function loadUsers() {
+    const tbody = document.getElementById("userTableBody");
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Loading…</td></tr>';
+    try {
+      const { users } = await apiFetch("/admin/users");
+      if (!users.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">No users found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = users.map(u => renderUserRow(u)).join("");
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="7" class="loading" style="color:var(--red)">${e.message}</td></tr>`;
+    }
+  }
+
+  function renderUserRow(u) {
+    const initials = (u.full_name || u.email).charAt(0).toUpperCase();
+    const joined   = new Date(u.created_at).toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
+    const statusBadge = u.is_active
+      ? '<span class="badge active">● Active</span>'
+      : '<span class="badge inactive">● Inactive</span>';
+    const adminBadge = u.is_admin ? '<span class="badge admin" style="margin-left:4px">Admin</span>' : "";
+    const docChips = u.documents.length
+      ? u.documents.map(d => `<span class="doc-chip" title="${d}">${d}</span>`).join("")
+      : '<span style="color:var(--muted);font-size:11px">No docs</span>';
+
+    const promoteBtn = !u.is_admin
+      ? `<button class="btn-sm btn-promote" onclick="promoteUser(${u.id}, '${escHtml(u.email)}')">Make Admin</button>`
+      : `<button class="btn-sm btn-demote" onclick="demoteUser(${u.id}, '${escHtml(u.email)}')">Remove Admin</button>`;
+
+    const toggleBtn = u.is_active
+      ? `<button class="btn-sm btn-danger" onclick="deactivateUser(${u.id}, '${escHtml(u.email)}')">Deactivate</button>`
+      : `<button class="btn-sm btn-success" onclick="activateUser(${u.id}, '${escHtml(u.email)}')">Activate</button>`;
+
+    return `
+      <tr id="user-row-${u.id}">
+        <td>
+          <div class="user-info">
+            <div class="avatar-circle">${initials}</div>
+            <div>
+              <div class="user-name">${escHtml(u.full_name || "—")}</div>
+              <div class="user-email">${escHtml(u.email)}</div>
+            </div>
+          </div>
+        </td>
+        <td>${statusBadge}${adminBadge}</td>
+        <td><div class="doc-chips">${docChips}</div></td>
+        <td style="font-family:var(--mono);color:var(--blue)">${u.sessions}</td>
+        <td style="font-family:var(--mono);color:var(--yellow)">${u.messages}</td>
+        <td style="color:var(--muted);font-size:11px;font-family:var(--mono)">${joined}</td>
+        <td>
+          <div class="action-row">
+            <button class="btn-sm btn-view" onclick="viewSessions(${u.id}, '${escHtml(u.email)}')">View Chats</button>
+            ${promoteBtn}
+            ${toggleBtn}
+            <button class="btn-sm btn-danger" onclick="deleteUser(${u.id}, '${escHtml(u.email)}')">Delete</button>
+          </div>
+        </td>
+      </tr>`;
+  }
+
+  // ── User actions ──────────────────────────────────────────────────────────
+  async function deleteUser(id, email) {
+    if (!confirm(`Delete "${email}" and ALL their data? This cannot be undone.`)) return;
+    try {
+      await apiFetch(`/admin/users/${id}`, { method: "DELETE" });
+      showToast(`Deleted ${email}`, "success");
+      await loadAll();
+    } catch (e) { showToast(e.message, "error"); }
+  }
+
+  async function promoteUser(id, email) {
+    if (!confirm(`Make "${email}" an admin?`)) return;
+    try {
+      await apiFetch(`/admin/users/${id}/promote`, { method: "POST" });
+      showToast(`${email} is now an admin`, "success");
+      await loadAll();
+    } catch (e) { showToast(e.message, "error"); }
+  }
+
+  async function demoteUser(id, email) {
+    if (!confirm(`Remove admin from "${email}"?`)) return;
+    try {
+      await apiFetch(`/admin/users/${id}/demote`, { method: "POST" });
+      showToast(`Admin removed from ${email}`, "success");
+      await loadAll();
+    } catch (e) { showToast(e.message, "error"); }
+  }
+
+  async function deactivateUser(id, email) {
+    if (!confirm(`Deactivate "${email}"? They won't be able to log in.`)) return;
+    try {
+      await apiFetch(`/admin/users/${id}/deactivate`, { method: "POST" });
+      showToast(`${email} deactivated`, "success");
+      await loadAll();
+    } catch (e) { showToast(e.message, "error"); }
+  }
+
+  async function activateUser(id, email) {
+    try {
+      await apiFetch(`/admin/users/${id}/activate`, { method: "POST" });
+      showToast(`${email} activated`, "success");
+      await loadAll();
+    } catch (e) { showToast(e.message, "error"); }
+  }
+
+  // ── View sessions modal ───────────────────────────────────────────────────
+  async function viewSessions(userId, email) {
+    document.getElementById("modalTitle").textContent = `💬 ${email} — Chat Sessions`;
+    document.getElementById("modalBody").innerHTML = '<div class="loading">Loading sessions…</div>';
+    document.getElementById("modalOverlay").classList.add("open");
+
+    try {
+      const { sessions } = await apiFetch(`/admin/users/${userId}/sessions`);
+      const body = document.getElementById("modalBody");
+
+      if (!sessions.length) {
+        body.innerHTML = '<div class="msg-empty">No chat sessions yet.</div>';
+        return;
+      }
+
+      body.innerHTML = sessions.map((s, i) => `
+        <div class="session-card">
+          <div class="session-card-header" onclick="toggleSession('sess-${i}')">
+            <div>
+              <div class="session-name">${escHtml(s.title)}</div>
+              <div class="session-date">${new Date(s.updated_at).toLocaleString()} · ${s.messages.length} messages</div>
+            </div>
+            <span style="color:var(--muted);font-size:12px" id="sess-arrow-${i}">▶</span>
+          </div>
+          <div class="session-messages" id="sess-${i}">
+            ${s.messages.length
+              ? s.messages.map(m => `
+                  <div class="msg-row">
+                    <span class="msg-role ${m.role === 'user' ? 'user' : 'ai'}">${m.role === 'user' ? 'Student' : 'AI'}</span>
+                    <div class="msg-text">${escHtml(m.content)}</div>
+                  </div>`).join("")
+              : '<div class="msg-empty">No messages.</div>'
+            }
+          </div>
+        </div>`).join("");
+    } catch (e) {
+      document.getElementById("modalBody").innerHTML =
+        `<div class="msg-empty" style="color:var(--red)">${e.message}</div>`;
+    }
+  }
+
+  function toggleSession(id) {
+    const el    = document.getElementById(id);
+    const arrow = document.getElementById(id.replace("sess-", "sess-arrow-"));
+    const open  = el.classList.toggle("open");
+    if (arrow) arrow.textContent = open ? "▼" : "▶";
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById("modalOverlay")) closeModalDirect();
+  }
+  function closeModalDirect() {
+    document.getElementById("modalOverlay").classList.remove("open");
+  }
+
+  // ── Toast ─────────────────────────────────────────────────────────────────
+  let _tt;
+  function showToast(msg, type = "info") {
+    const t = document.getElementById("toast");
+    t.textContent = msg; t.className = `toast show ${type}`;
+    clearTimeout(_tt);
+    _tt = setTimeout(() => t.className = "toast", 3500);
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  // ── Boot ──────────────────────────────────────────────────────────────────
+  loadAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+# docker-compose.yml — StudyRAG
+#
+# Run with:  docker compose up
+# Stop with: docker compose down
+#
+# Data persists in Docker volumes:
+#   studyrag_data → /data (uploads, vectorstore, db, logs)
+#
+# Environment variables are loaded from .env file in project root
+
+services:
+  studyrag:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Container name — makes it easy to find in Docker Desktop
+    container_name: studyrag-app
+
+    ports:
+      # host:container — access at http://localhost:8000
+      - "8000:8000"
+
+    environment:
+      # Read from your .env file automatically
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - DATA_DIR=/data
+
+    volumes:
+      # Persist all data outside the container
+      # Format: named_volume:container_path
+      - studyrag_data:/data
+
+    # Restart automatically if the container crashes
+    restart: unless-stopped
+
+    # Health check — Docker will monitor if the app is responding
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s   # give time for models to download on first start
+
+# Named volumes — Docker manages these on your disk
+# Data survives container restarts and rebuilds
+volumes:
+  studyrag_data:
+    driver: local

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyRAG — Privacy Policy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0d0f14;
+      --surface: #13161e;
+      --border:  #252a38;
+      --accent:  #f97316;
+      --text:    #e8eaf0;
+      --muted:   #6b7280;
+      --font:    'Sora', sans-serif;
+    }
+    html, body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 15px; line-height: 1.7; }
+
+    .topbar {
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 32px; height: 56px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .logo { font-size: 16px; font-weight: 700; background: linear-gradient(135deg,#f97316,#fb923c); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+    .topbar-spacer { flex: 1; }
+    .btn-back { padding: 5px 14px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--muted); font-family: var(--font); font-size: 12px; cursor: pointer; text-decoration: none; }
+    .btn-back:hover { color: var(--text); border-color: var(--text); }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 48px 32px 80px; }
+    h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+    .subtitle { color: var(--muted); font-size: 13px; margin-bottom: 40px; }
+    h2 { font-size: 17px; font-weight: 600; margin: 36px 0 12px; color: var(--accent); }
+    p  { color: #c5c9d4; margin-bottom: 14px; }
+    ul { color: #c5c9d4; padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+    a  { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .highlight-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px; padding: 16px 20px; margin: 20px 0;
+      color: #c5c9d4; font-size: 14px;
+    }
+    .footer { margin-top: 60px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 12px; display: flex; gap: 20px; }
+    .footer a { color: var(--muted); }
+    .footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="logo" href="/">StudyRAG</a>
+  <div class="topbar-spacer"></div>
+  <a class="btn-back" href="/">← Back to App</a>
+</div>
+
+<div class="container">
+  <h1>Privacy Policy</h1>
+  <div class="subtitle">Last updated: March 2026 · StudyRAG AI Study Assistant</div>
+
+  <div class="highlight-box">
+    <strong>Summary:</strong> We collect your email, name, and chat history to provide the service.
+    Your questions and document content are sent to Groq's AI servers to generate answers.
+    You can delete your account and all your data at any time.
+  </div>
+
+  <h2>1. Who We Are</h2>
+  <p>
+    StudyRAG is an AI-powered study assistant that allows students to upload PDF documents
+    and interact with the content through a chat interface. This service is operated as an
+    educational tool.
+  </p>
+
+  <h2>2. What Data We Collect</h2>
+  <p>We collect and store the following information:</p>
+  <ul>
+    <li><strong>Account information:</strong> Your email address, full name, and a secure hash of your password (never the plain text password)</li>
+    <li><strong>Uploaded documents:</strong> PDF files you upload are stored on our server for indexing purposes</li>
+    <li><strong>Chat history:</strong> Every question you ask and every answer you receive is stored to provide session history</li>
+    <li><strong>Usage logs:</strong> Server logs including IP addresses and request timestamps for security and debugging</li>
+  </ul>
+
+  <h2>3. How We Use Your Data</h2>
+  <ul>
+    <li>To provide the AI chat service — your questions and document content are processed to generate answers</li>
+    <li>To maintain your chat history so you can review past sessions</li>
+    <li>To authenticate your account securely</li>
+    <li>To prevent abuse through rate limiting</li>
+  </ul>
+
+  <h2>4. Third-Party AI Processing — Groq</h2>
+  <div class="highlight-box">
+    <strong>Important:</strong> When you ask a question, your question text and relevant
+    excerpts from your uploaded documents are sent to Groq's API servers located in the
+    United States to generate an AI response. Please do not upload documents containing
+    confidential, sensitive, or personally identifiable information.
+  </div>
+  <p>
+    Groq's privacy policy is available at <a href="https://groq.com/privacy-policy/" target="_blank">groq.com/privacy-policy</a>.
+    Groq states they do not use API data to train their models.
+  </p>
+  <p>
+    The AI responses are generated by large language models (LLaMA, Mixtral, Gemma)
+    and are indicated with the model name on each response bubble.
+  </p>
+
+  <h2>5. Data Storage and Security</h2>
+  <ul>
+    <li>Your data is stored on secured servers with HTTPS encryption in transit</li>
+    <li>Passwords are hashed using bcrypt — we cannot recover your password</li>
+    <li>Each user's documents are stored in isolated spaces — other users cannot access your files</li>
+    <li>We implement rate limiting to protect against unauthorised access attempts</li>
+  </ul>
+
+  <h2>6. Your Rights (NZ Privacy Act 2020)</h2>
+  <p>Under the New Zealand Privacy Act 2020 and consistent with GDPR principles, you have the right to:</p>
+  <ul>
+    <li><strong>Access:</strong> Request a copy of the data we hold about you</li>
+    <li><strong>Correction:</strong> Request correction of inaccurate data</li>
+    <li><strong>Deletion:</strong> Delete your account and all associated data at any time using the "Delete Account" feature in settings</li>
+    <li><strong>Portability:</strong> Request your chat history in a readable format</li>
+  </ul>
+  <p>
+    You can delete your account directly from the application settings, which permanently
+    removes your email, chat history, uploaded documents, and all associated data.
+  </p>
+
+  <h2>7. Data Retention</h2>
+  <p>
+    We retain your data for as long as your account is active. When you delete your account,
+    all your data is permanently deleted from our servers within 24 hours, including your
+    email, chat sessions, messages, and uploaded documents.
+    Server logs may be retained for up to 30 days for security purposes.
+  </p>
+
+  <h2>8. Cookies and Tracking</h2>
+  <p>
+    StudyRAG does not use cookies or third-party tracking. Your JWT authentication token
+    is stored in your browser's local storage solely to maintain your login session.
+    We do not use advertising networks or analytics services.
+  </p>
+
+  <h2>9. Children's Privacy</h2>
+  <p>
+    This service is intended for users aged 16 and over, or students using it under
+    supervision of an educator. We do not knowingly collect data from children under 13.
+  </p>
+
+  <h2>10. AI-Generated Content Disclaimer</h2>
+  <p>
+    All responses are generated by artificial intelligence and may contain inaccuracies,
+    errors, or outdated information. Responses are based on the content of your uploaded
+    documents and should not be relied upon as a substitute for professional, legal,
+    medical, or academic advice. Always verify important information with the original
+    source material or a qualified professional.
+  </p>
+
+  <h2>11. Contact</h2>
+  <p>
+    For privacy-related questions or to exercise your data rights, please use the
+    "Delete Account" feature within the application or contact the administrator
+    through the platform.
+  </p>
+
+  <div class="footer">
+    <a href="/terms">Terms of Use</a>
+    <a href="/">Back to App</a>
+    <span style="margin-left:auto">© 2026 StudyRAG</span>
+  </div>
+</div>
+
+</body>
+</html>
